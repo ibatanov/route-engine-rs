@@ -55,7 +55,7 @@ pub fn shortest_path_with_constraint<N, E, S, C>(
 ) -> Result<Option<PathResult<S::State>>, DijkstraError>
 where
     S: PathStrategy<E>,
-    C: PathConstraint<N, E>,
+    C: PathConstraint<N, E, S::State>,
 {
     let node_count = graph.node_count();
     if from.index() >= node_count {
@@ -121,11 +121,11 @@ where
                 edge,
             };
 
-            if !constraint.allow_edge(&edge_ctx) {
+            let next_state = strategy.next_state(&current_state, edge);
+
+            if !constraint.allow_edge(&edge_ctx, &current_state, &next_state) {
                 continue;
             }
-
-            let next_state = strategy.next_state(&current_state, edge);
             let next_key = strategy.key(&next_state);
 
             let Some(best_next) = best.get(next_node.index()) else {

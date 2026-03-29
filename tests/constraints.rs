@@ -15,8 +15,13 @@ struct Road {
 
 struct TransitConstraint;
 
-impl PathConstraint<City, Road> for TransitConstraint {
-    fn allow_edge(&self, ctx: &EdgeContext<'_, City, Road>) -> bool {
+impl PathConstraint<City, Road, u64> for TransitConstraint {
+    fn allow_edge(
+        &self,
+        ctx: &EdgeContext<'_, City, Road>,
+        _prev_state: &u64,
+        _next_state: &u64,
+    ) -> bool {
         if ctx.from == ctx.source || ctx.from == ctx.target {
             return true;
         }

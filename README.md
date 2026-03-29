@@ -28,13 +28,20 @@
 cargo run --example transit_cost
 ```
 
+Пример с накопленным состоянием (ограничение на число плеч):
+
+```bash
+cargo run --example stateful_constraint_max_hops
+```
+
 ## Как расширять
 
 1. Добавить новую стратегию:
 реализовать `PathStrategy<E>` и определить `State` + `Key`.
 
 2. Добавить новое бизнес-правило:
-реализовать `PathConstraint<N, E>` и проверять ребро через `EdgeContext`.
+реализовать `PathConstraint<N, E, St>` и проверять ребро через `EdgeContext`,
+используя `prev_state`/`next_state` при необходимости.
 
 3. Запустить поиск:
 - без ограничений: `shortest_path(...)`
