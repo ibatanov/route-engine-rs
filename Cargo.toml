@@ -1,0 +1,10 @@
+[package]
+name = "route-engine-rs"
+version = "0.1.0"
+edition = "2024"
+description = "Routing engine for directed graphs with extensible strategies and constraints"
+license = "MIT"
+repository = "https://github.com/ibatanov/route-engine-rs"
+authors = ["Igor Batanov <irbatanov@ya.ru>"]
+
+[dependencies]
