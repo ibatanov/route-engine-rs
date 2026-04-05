@@ -36,11 +36,7 @@ impl<FP, FS> ByTwoCosts<FP, FS> {
         }
     }
 
-    pub fn with_order(
-        primary_cost_of: FP,
-        secondary_cost_of: FS,
-        order: TwoCostsOrder,
-    ) -> Self {
+    pub fn with_order(primary_cost_of: FP, secondary_cost_of: FS, order: TwoCostsOrder) -> Self {
         Self {
             primary_cost_of,
             secondary_cost_of,

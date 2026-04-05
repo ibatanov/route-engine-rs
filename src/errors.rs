@@ -42,14 +42,8 @@ impl Error for GraphError {}
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum DijkstraError {
-    SourceNodeOutOfBounds {
-        index: usize,
-        node_count: usize,
-    },
-    TargetNodeOutOfBounds {
-        index: usize,
-        node_count: usize,
-    },
+    SourceNodeOutOfBounds { index: usize, node_count: usize },
+    TargetNodeOutOfBounds { index: usize, node_count: usize },
 }
 
 impl Display for DijkstraError {

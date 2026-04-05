@@ -1,7 +1,8 @@
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
-use crate::constraints::{AllowAll, EdgeContext, PathConstraint};
+use crate::constraints::allow::AllowAll;
+use crate::constraints::{EdgeContext, PathConstraint};
 use crate::errors::DijkstraError;
 use crate::graph::{Graph, NodeId};
 use crate::strategies::PathStrategy;
@@ -73,7 +74,7 @@ where
 
     let mut best: Vec<Option<(S::Key, S::State)>> = vec![None; node_count];
     let mut prev: Vec<Option<NodeId>> = vec![None; node_count];
-    let mut heap: BinaryHeap<QueueEntry<S::Key>> = BinaryHeap::new();
+    let mut heap: BinaryHeap<QueueEntry<S::Key>> = BinaryHeap::with_capacity(node_count);
 
     let start_state = strategy.start_state();
     let start_key = strategy.key(&start_state);
@@ -84,10 +85,8 @@ where
     });
 
     while let Some(entry) = heap.pop() {
-        let Some(best_at_node) = best.get(entry.node.index()) else {
-            continue;
-        };
-        let Some((best_key, best_state_ref)) = best_at_node.as_ref() else {
+        let entry_idx = entry.node.index();
+        let Some((best_key, best_state_ref)) = best[entry_idx].as_ref() else {
             continue;
         };
 
@@ -128,24 +127,16 @@ where
             }
             let next_key = strategy.key(&next_state);
 
-            let Some(best_next) = best.get(next_node.index()) else {
-                continue;
-            };
+            let next_idx = (*next_node).index();
 
-            let should_relax = match best_next.as_ref() {
+            let should_relax = match best[next_idx].as_ref() {
                 None => true,
                 Some((known_key, _)) => next_key < *known_key,
             };
 
             if should_relax {
-                let Some(best_next_mut) = best.get_mut(next_node.index()) else {
-                    continue;
-                };
-                let Some(prev_next_mut) = prev.get_mut(next_node.index()) else {
-                    continue;
-                };
-                *best_next_mut = Some((next_key.clone(), next_state));
-                *prev_next_mut = Some(entry.node);
+                best[next_idx] = Some((next_key.clone(), next_state));
+                prev[next_idx] = Some(entry.node);
                 heap.push(QueueEntry {
                     key: next_key,
                     node: *next_node,

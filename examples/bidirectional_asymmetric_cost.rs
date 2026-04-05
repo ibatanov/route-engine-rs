@@ -5,8 +5,7 @@ use route_engine_rs::graph::{Graph, NodeId};
 use route_engine_rs::strategies::by_cost::ByCost;
 
 fn format_path(graph: &Graph<&'static str, u64>, path: &PathResult<u64>) -> String {
-    path
-        .nodes
+    path.nodes
         .iter()
         .map(|id| graph.node(*id).copied().unwrap_or("<unknown>"))
         .collect::<Vec<_>>()

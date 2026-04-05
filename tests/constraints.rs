@@ -1,5 +1,6 @@
 use route_engine_rs::algorithms::{shortest_path, shortest_path_with_constraint};
-use route_engine_rs::constraints::{AllowAll, EdgeContext, PathConstraint};
+use route_engine_rs::constraints::allow::AllowAll;
+use route_engine_rs::constraints::{EdgeContext, PathConstraint};
 use route_engine_rs::graph::{Graph, NodeId};
 use route_engine_rs::strategies::by_cost::ByCost;
 
@@ -42,9 +43,13 @@ fn allow_all_constraint_matches_shortest_path() {
 
     let strategy = ByCost::new(|edge: &u64| *edge);
     let base = shortest_path(&graph, a, c, &strategy).unwrap();
-    let with_constraint = shortest_path_with_constraint(&graph, a, c, &strategy, &AllowAll).unwrap();
+    let with_constraint =
+        shortest_path_with_constraint(&graph, a, c, &strategy, &AllowAll).unwrap();
 
-    assert_eq!(base.as_ref().map(|p| p.state), with_constraint.as_ref().map(|p| p.state));
+    assert_eq!(
+        base.as_ref().map(|p| p.state),
+        with_constraint.as_ref().map(|p| p.state)
+    );
     assert_eq!(
         base.as_ref()
             .map(|p| p.nodes.iter().map(|n| n.index()).collect::<Vec<_>>()),
@@ -97,13 +102,7 @@ fn transit_constraint_allows_reaching_non_transit_target() {
     let non_transit_target = graph.add_node(City { is_transit: false });
 
     graph
-        .add_edge(
-            source,
-            non_transit_target,
-            Road {
-                cost: 7,
-            },
-        )
+        .add_edge(source, non_transit_target, Road { cost: 7 })
         .unwrap();
 
     let strategy = ByCost::new(|edge: &Road| edge.cost);
